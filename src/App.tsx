@@ -1,10 +1,11 @@
-import { FormControl, List, TextField } from '@material-ui/core';
-import AddToPhotoIcon from "@material-ui/icons/AddToPhotos"
-import React, { useState, useEffect } from 'react';
-import styles from './App.module.css';
-import { db } from "./firebase";
-import TaskItem from "./TaskItem";
+import React, { useState, useEffect } from "react";
+import styles from "./App.module.css";
+import { FormControl, List, TextField } from "@material-ui/core";
+import AddToPhotosIcon from "@material-ui/icons/AddToPhotos";
 import { makeStyles } from "@material-ui/styles";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { db, auth } from "./firebase";
+import TaskItem from "./TaskItem";
 
 const useStyles = makeStyles({
   field: {
@@ -14,14 +15,21 @@ const useStyles = makeStyles({
   list: {
     margin: "auto",
     width: "40%",
-  }
-})
+  },
+});
 
-
-const App: React.FC = () => {
+const App: React.FC = (props: any) => {
   const [tasks, setTasks] = useState([{ id: "", title: "" }]);
   const [input, setInput] = useState("");
   const classes = useStyles();
+
+  useEffect(() => {
+    const unSub = auth.onAuthStateChanged((user) => {
+      !user && props.history.push("login");
+    });
+    return () => unSub();
+  });
+
   useEffect(() => {
     const unSub = db.collection("tasks").onSnapshot((snapshot) => {
       setTasks(
@@ -34,15 +42,32 @@ const App: React.FC = () => {
   const newTask = (e: React.MouseEvent<HTMLButtonElement>) => {
     db.collection("tasks").add({ title: input });
     setInput("");
-  }
+  };
 
   return (
     <div className={styles.app__root}>
-      <h1>Todo App by React/Firbase</h1>
+      <h1>Todo App by React/Firebase</h1>
+      <button
+        className={styles.app__logout}
+        onClick={async () => {
+          try {
+            await auth.signOut();
+            props.history.push("login");
+          } catch (error) {
+            alert(error.message);
+          }
+        }}
+      >
+        <ExitToAppIcon />
+      </button>
+
       <br />
       <FormControl>
         <TextField
           className={classes.field}
+          InputLabelProps={{
+            shrink: true,
+          }}
           label="New task ?"
           value={input}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -51,7 +76,7 @@ const App: React.FC = () => {
         />
       </FormControl>
       <button className={styles.app__icon} disabled={!input} onClick={newTask}>
-        <AddToPhotoIcon />
+        <AddToPhotosIcon />
       </button>
 
       <List className={classes.list}>
@@ -62,4 +87,5 @@ const App: React.FC = () => {
     </div>
   );
 };
+
 export default App;
