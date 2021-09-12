@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import styles from "./TaskItem.module.css"
-import * as firebase from "firebase/app";
 import { ListItem, TextField, Grid } from '@material-ui/core';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -22,7 +21,6 @@ const TaskItem: React.FC<PROPS> = (props) => {
     db.collection("tasks").doc(props.id).delete();
   }
   return (
-    
       <ListItem>
         <h2>{props.title}</h2>
         <Grid container justifyContent="flex-end">
