@@ -53,7 +53,7 @@ const App: React.FC = (props: any) => {
           try {
             await auth.signOut();
             props.history.push("login");
-          } catch (error) {
+          } catch (error: any) {
             alert(error.message);
           }
         }}

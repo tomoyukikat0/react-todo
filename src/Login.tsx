@@ -59,7 +59,7 @@ const Login: React.FC = (props: any) => {
                   await auth.signInWithEmailAndPassword(email, password);
                   props.history.push("/");
                 } catch (error: any) {
-                  alert(error.message);
+                  alert(error);
                 }
               }
             : async () => {
@@ -67,7 +67,7 @@ const Login: React.FC = (props: any) => {
                   await auth.createUserWithEmailAndPassword(email, password);
                   props.history.push("/");
                 } catch (error: any) {
-                  alert(error.message);
+                  alert(error);
                 }
               }
         }
